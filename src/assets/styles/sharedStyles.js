@@ -56,7 +56,7 @@ const Info = styled.input`
   color: #666666;
   width: 303px;
   height: 45px;
-  background-color: #ffffff;
+  background-color: #98c1d9;
   border: 1px solid #d5d5d5;
   border-radius: 5px;
   margin: 6px;

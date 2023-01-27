@@ -8,73 +8,68 @@ import {
 } from "../assets/styles/sharedStyles";
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-//import { login } from "../services/mywalletServices";
-//import UserContext from "./context/UserContext";
-//import LoginContext from "./context/LoginContext";
+import { toast } from "react-toastify";
+import useSignIn from "../hooks/useSignIn";
+import UserContext from "../contexts/userContext";
 
 export default function Login() {
-  const navigate = useNavigate();
-  //const { setToken } = useContext(LoginContext);
-  //const { setUser } = useContext(UserContext);
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  function handleForm(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-    console.log(form);
+  const { loadingSignIn, signIn } = useSignIn();
+  const { setUserData } = useContext(UserContext);
+
+  const navigate = useNavigate();
+
+  async function handleLogin(e) {
+    e.preventDefault();
+
+    try {
+      const userData = await signIn(email, password);
+      setUserData(userData);
+      toast("Login realizado com sucesso!");
+      navigate("/dashboard");
+    } catch (err) {
+      toast("Não foi possível fazer o login!");
+    }
   }
 
-  /* function sendLogin(e) {
-    e.preventDefault();
-    const promise = login(form);
-    promise
-      .then((res) => {
-        setUser(res.data.user);
-        setToken(res.data.token);
-        console.log(res.data.user);
-        console.log(res.data.token);
-        navigate("/inicio");
-      })
-      .catch((res) => {
-        //alert(res.response.data.message);
-        alert("Algo está errado, verifique suas informações!");
-      });
-  } */
   return (
     <>
       <Content>
         <Wrapper>
           <Logo>My Streaming Manager</Logo>
 
-          <form>
+          <form onSubmit={handleLogin}>
             <Wrapper>
               <Info
                 type="email"
                 placeholder="E-mail"
-                name="email"
-                onChange={handleForm}
-                value={form.email}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
               <Info
                 type="password"
                 placeholder="Senha"
-                name="password"
-                onChange={handleForm}
-                value={form.password}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
 
-              <Bigbutton type="submit">Entrar</Bigbutton>
+              <Bigbutton type="submit" disabled={loadingSignIn}>
+                Login
+              </Bigbutton>
+              <Bigbutton type="submit" disabled={loadingSignIn}>
+                Login com Google
+              </Bigbutton>
+              <Bigbutton type="submit" disabled={loadingSignIn}>
+                Login com Facebook
+              </Bigbutton>
             </Wrapper>
           </form>
           <SpanLink>
-            <Link to="/cadastro">Primeira vez? Cadastre-se!</Link>
+            <Link to="/register">Primeira vez? Cadastre-se!</Link>
           </SpanLink>
         </Wrapper>
       </Content>
