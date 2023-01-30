@@ -5,12 +5,13 @@ import {
   Bigbutton,
   Content,
   SpanLink,
-} from "../assets/styles/sharedStyles";
+} from "../../assets/styles/sharedStyles";
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import useSignIn from "../hooks/useSignIn";
-import UserContext from "../contexts/userContext";
+import useSignIn from "../../hooks/useSignIn";
+import GoogleSignIn from "./googleSignIn";
+import UserContext from "../../contexts/userContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -60,9 +61,7 @@ export default function Login() {
               <Bigbutton type="submit" disabled={loadingSignIn}>
                 Login
               </Bigbutton>
-              <Bigbutton type="submit" disabled={loadingSignIn}>
-                Login com Google
-              </Bigbutton>
+              <GoogleSignIn />
               <Bigbutton type="submit" disabled={loadingSignIn}>
                 Login com Facebook
               </Bigbutton>
