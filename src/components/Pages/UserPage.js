@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Footer from "../Footer";
 
 export default function userPage() {
   return (
@@ -20,6 +21,7 @@ export default function userPage() {
       <SumDiv>Total</SumDiv>
       <Title>Títulos populares</Title>
       <Spacer />
+      <Footer />
     </Container>
   );
 }

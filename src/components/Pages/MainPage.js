@@ -2,7 +2,7 @@ import UserContext from "../../contexts/userContext";
 import { useContext, useState } from "react";
 import useStreaming from "../../hooks/useStreaming";
 import styled from "styled-components";
-import Header from "../Header";
+import Footer from "../Footer";
 
 function Streaming({ info, selected, setSelected }) {
   let bgColor = "#3D5A80";
@@ -67,6 +67,7 @@ export default function MainPage() {
           </StreamingContainer>
         )}
         {selected.length !== 0 ? <NextButton>Confirmar</NextButton> : <></>}
+        <Footer />
       </Container>
     </>
   );
