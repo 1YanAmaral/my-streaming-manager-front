@@ -1,32 +1,72 @@
 import UserContext from "../../contexts/userContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import useStreaming from "../../hooks/useStreaming";
 import styled from "styled-components";
+import Header from "../Header";
+
+function Streaming({ info, selected, setSelected }) {
+  let bgColor = "#3D5A80";
+  if (isSelected(selected, info)) {
+    bgColor = "#EE6C4D";
+    return (
+      <StreamingCard
+        onClick={() =>
+          setSelected(selected.filter((streaming) => streaming.id !== info.id))
+        }
+        background={bgColor}
+      >
+        <ImgWraper>
+          <img src={info.logo} alt="logo" />
+        </ImgWraper>
+      </StreamingCard>
+    );
+  } else {
+    return (
+      <StreamingCard
+        onClick={() => setSelected([...selected, info])}
+        background={bgColor}
+      >
+        <ImgWraper>
+          <img src={info.logo} alt="logo" />
+        </ImgWraper>
+      </StreamingCard>
+    );
+  }
+}
+
+function isSelected(selected, info) {
+  if (selected.find((streaming) => streaming.id === info.id)) {
+    return true;
+  }
+}
 
 export default function MainPage() {
   const { userData, setUserData } = useContext(UserContext);
   const { streaming, streamingLoading } = useStreaming();
-  console.log(streamingLoading);
+  const [selected, setSelected] = useState([]);
   console.log(streaming);
+  console.log(selected);
 
   return (
     <>
       <Container>
         <Title>Olá, {userData.displayName}!</Title>
-        <Info>Selecione os serviços que assina</Info>
+        <Info>Selecione os serviços que assina:</Info>
         {streamingLoading ? (
           <p>Loading...</p>
         ) : (
           <StreamingContainer>
             {streaming.map((streaming) => (
-              <StreamingCard>
-                <ImgWraper>
-                  <img src={streaming.logo} alt="logo" />
-                </ImgWraper>
-              </StreamingCard>
+              <Streaming
+                key={streaming.id}
+                selected={selected}
+                setSelected={setSelected}
+                info={streaming}
+              />
             ))}
           </StreamingContainer>
         )}
+        {selected.length !== 0 ? <NextButton>Confirmar</NextButton> : <></>}
       </Container>
     </>
   );
@@ -40,7 +80,7 @@ const StreamingCard = styled.div`
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
-  background-color: #3d5a80;
+  background-color: ${(props) => props.background};
   color: #e0fbfc;
   width: 8rem;
   height: 8rem;
@@ -72,6 +112,8 @@ const StreamingContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+  margin: 1rem 1rem;
+  position: relative;
 `;
 
 const Title = styled.span`
@@ -95,4 +137,23 @@ const Info = styled.span`
 const ImgWraper = styled.div`
   display: flex;
   flex-wrap: wrap;
+`;
+
+const NextButton = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 8rem;
+  height: 4rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  color: #e5e5e5;
+  background-color: #ee6c4d;
+  border-radius: 20px;
+  position: absolute;
+  right: 1rem;
+  bottom: 12rem;
+  margin-top: 3rem;
 `;
