@@ -3,39 +3,49 @@ import { useContext, useState } from "react";
 import useStreaming from "../../hooks/useStreaming";
 import styled from "styled-components";
 import Footer from "../Footer";
+import { Link, useNavigate } from "react-router-dom";
+import useUserStreaming from "../../hooks/useUserStreaming";
+import { toast } from "react-toastify";
 
-function Streaming({ info, selected, setSelected }) {
+function Streaming({ streamingId, selected, setSelected, logo, userData }) {
   let bgColor = "#3D5A80";
-  if (isSelected(selected, info)) {
+  if (isSelected(selected, streamingId)) {
     bgColor = "#EE6C4D";
     return (
       <StreamingCard
         onClick={() =>
-          setSelected(selected.filter((streaming) => streaming.id !== info.id))
+          setSelected(
+            selected.filter((data) => data.streamingId !== streamingId)
+          )
         }
         background={bgColor}
       >
         <ImgWraper>
-          <img src={info.logo} alt="logo" />
+          <img src={logo} alt="logo" />
         </ImgWraper>
       </StreamingCard>
     );
   } else {
     return (
       <StreamingCard
-        onClick={() => setSelected([...selected, info])}
+        onClick={() =>
+          setSelected([
+            ...selected,
+            { streamingId: streamingId, userId: userData.user.id },
+          ])
+        }
         background={bgColor}
       >
         <ImgWraper>
-          <img src={info.logo} alt="logo" />
+          <img src={logo} alt="logo" />
         </ImgWraper>
       </StreamingCard>
     );
   }
 }
 
-function isSelected(selected, info) {
-  if (selected.find((streaming) => streaming.id === info.id)) {
+function isSelected(selected, streamingId) {
+  if (selected.find((data) => data.streamingId === streamingId)) {
     return true;
   }
 }
@@ -43,14 +53,25 @@ function isSelected(selected, info) {
 export default function MainPage() {
   const { userData, setUserData } = useContext(UserContext);
   const { streaming, streamingLoading } = useStreaming();
+  const { postUserStreaming } = useUserStreaming();
   const [selected, setSelected] = useState([]);
+  const navigate = useNavigate();
   console.log(streaming);
   console.log(selected);
+
+  async function sendSelectedStreamings() {
+    try {
+      await postUserStreaming(selected);
+      navigate("/user");
+    } catch (err) {
+      toast("Não foi possível escolher os streamings");
+    }
+  }
 
   return (
     <>
       <Container>
-        <Title>Olá, {userData.displayName}!</Title>
+        <Title>Olá, {userData.user.name}!</Title>
         <Info>Selecione os serviços que assina:</Info>
         {streamingLoading ? (
           <p>Loading...</p>
@@ -61,12 +82,20 @@ export default function MainPage() {
                 key={streaming.id}
                 selected={selected}
                 setSelected={setSelected}
-                info={streaming}
+                streamingId={streaming.id}
+                logo={streaming.logo}
+                userData={userData}
               />
             ))}
           </StreamingContainer>
         )}
-        {selected.length !== 0 ? <NextButton>Confirmar</NextButton> : <></>}
+        {selected.length !== 0 ? (
+          <NextButton onClick={() => sendSelectedStreamings()}>
+            Confirmar
+          </NextButton>
+        ) : (
+          <></>
+        )}
         <Footer />
       </Container>
     </>
@@ -89,6 +118,7 @@ const StreamingCard = styled.div`
   padding: 15px;
   margin-right: 20px;
   margin-bottom: 20px;
+  cursor: pointer;
 `;
 
 const Container = styled.div`
@@ -98,6 +128,7 @@ const Container = styled.div`
   flex-direction: column;
   overflow: hidden;
   background-color: #293241;
+  padding: 1.3rem;
 
   @media (max-width: 600px) {
     border-radius: 0;

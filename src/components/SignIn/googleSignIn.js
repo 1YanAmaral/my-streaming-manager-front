@@ -4,6 +4,8 @@ import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { auth } from "../../services/firebase";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
+import { toast } from "react-toastify";
+import { postSignInWithGoogle } from "../../services/authGoogle";
 
 export default function GoogleSignIn() {
   const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
@@ -12,19 +14,30 @@ export default function GoogleSignIn() {
 
   if (error) {
     console.log(error);
-    return (
-      <div>
-        <p>Error: {error.message}</p>
-      </div>
-    );
+    toast("Não foi possível fazer o login!");
   }
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <Bigbutton onClick={() => signInWithGoogle()} disabled={loading}>
+        Login com Google
+      </Bigbutton>
+    );
   }
   if (user) {
     console.log(user);
-    setUserData(user.user);
-    navigate("/main");
+    const name = user.user.displayName;
+    const token = user.user.accessToken;
+    const email = user.user.email;
+    const password = user.user.uid;
+    const userData = postSignInWithGoogle(name, email, password, token)
+      .then((res) => {
+        console.log(res);
+        setUserData(res);
+        navigate("/main");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   return (
     <Bigbutton onClick={() => signInWithGoogle()} disabled={loading}>

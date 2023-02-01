@@ -2,8 +2,10 @@ import styled from "styled-components";
 import { TbHome2 } from "react-icons/tb";
 import { HiSearch } from "react-icons/hi";
 import { IoIosOptions } from "react-icons/io";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Footer() {
+  const navigate = useNavigate();
   return (
     <FooterStyle>
       <FooterButtons>
