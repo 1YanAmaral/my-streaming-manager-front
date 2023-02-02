@@ -11,3 +11,15 @@ export async function postUserStreamings(selected) {
 
   return response.data;
 }
+
+export async function getStreamingsByUser(userId) {
+  const response = await api.get("/userstreamings/services", { userId });
+
+  return response.data;
+}
+
+export async function getPopularTitles(streamingId) {
+  const response = await api.get(`/streamings/titles/popular/${streamingId}`);
+
+  return response.data;
+}

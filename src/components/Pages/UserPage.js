@@ -1,15 +1,62 @@
+import { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
+import UserContext from "../../contexts/userContext";
+import {
+  getStreamingsByUser,
+  getPopularTitles,
+} from "../../services/streamingApi";
+import { getExpenses } from "../../services/userApi";
 import Footer from "../Footer";
 
-export default function userPage() {
+export default function UserPage() {
+  const { userData } = useContext(UserContext);
+  const [userStreamings, setUserStreamings] = useState([]);
+  const [popularTitles, setPopularTitles] = useState([]);
+  const [expenses, setExpenses] = useState(0);
+
+  useEffect(() => {
+    async function fetchUserStreamings() {
+      const result = await getStreamingsByUser({ userId: userData.user.id });
+      setUserStreamings(result);
+    }
+    fetchUserStreamings();
+  }, []);
+
+  console.log(userStreamings);
+  /*  useEffect(() => {
+    async function fetchPopularTitles() {
+      const result = await getPopularTitles(203);
+      setPopularTitles(result.titles);
+    }
+    fetchPopularTitles();
+  }, []); */
+
+  useEffect(() => {
+    async function fetchUserExpenses() {
+      const result = await getExpenses(userData.user.id);
+      setExpenses(result.expenses);
+    }
+    fetchUserExpenses();
+  }, []);
+
+  console.log(expenses);
   return (
     <Container>
       <Title>Meus streamings</Title>
       <Spacer />
       <StreamingsDiv>
-        <StreamingCard />
-        <StreamingCard />
-        <StreamingCard />
+        {userStreamings.length != 0 ? (
+          userStreamings.map((streaming) => (
+            <StreamingCard>
+              <img src={streaming.logo} alt="logo" />
+            </StreamingCard>
+          ))
+        ) : (
+          <p>
+            Você ainda não escolheu nenhum serviço. Adicione os streamings que
+            você assina!
+          </p>
+        )}
       </StreamingsDiv>
       <Title>Meus gastos</Title>
       <Spacer />
@@ -18,9 +65,14 @@ export default function userPage() {
         <StreamingSmall />
         <StreamingSmall />
       </StreamingsDiv>
-      <SumDiv>Total</SumDiv>
+      <SumDiv>Total: R${(expenses / 10000).toFixed(2)}</SumDiv>
       <Title>Títulos populares</Title>
       <Spacer />
+      <StreamingsDiv>
+        {popularTitles?.map((title) => (
+          <StreamingCard>{title.title}</StreamingCard>
+        ))}
+      </StreamingsDiv>
       <Footer />
     </Container>
   );

@@ -33,7 +33,7 @@ export default function GoogleSignIn() {
       .then((res) => {
         console.log(res);
         setUserData(res);
-        navigate("/main");
+        navigate("/user");
       })
       .catch((err) => {
         console.log(err);

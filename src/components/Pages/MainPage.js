@@ -6,18 +6,29 @@ import Footer from "../Footer";
 import { Link, useNavigate } from "react-router-dom";
 import useUserStreaming from "../../hooks/useUserStreaming";
 import { toast } from "react-toastify";
+import { updateExpenses } from "../../services/userApi";
 
-function Streaming({ streamingId, selected, setSelected, logo, userData }) {
+function Streaming({
+  streamingId,
+  selected,
+  setSelected,
+  logo,
+  userData,
+  price,
+  expenses,
+  setExpenses,
+}) {
   let bgColor = "#3D5A80";
   if (isSelected(selected, streamingId)) {
     bgColor = "#EE6C4D";
     return (
       <StreamingCard
-        onClick={() =>
+        onClick={() => {
           setSelected(
             selected.filter((data) => data.streamingId !== streamingId)
-          )
-        }
+          );
+          setExpenses(expenses - price);
+        }}
         background={bgColor}
       >
         <ImgWraper>
@@ -28,12 +39,13 @@ function Streaming({ streamingId, selected, setSelected, logo, userData }) {
   } else {
     return (
       <StreamingCard
-        onClick={() =>
+        onClick={() => {
           setSelected([
             ...selected,
             { streamingId: streamingId, userId: userData.user.id },
-          ])
-        }
+          ]);
+          setExpenses(expenses + price);
+        }}
         background={bgColor}
       >
         <ImgWraper>
@@ -51,17 +63,22 @@ function isSelected(selected, streamingId) {
 }
 
 export default function MainPage() {
-  const { userData, setUserData } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
   const { streaming, streamingLoading } = useStreaming();
   const { postUserStreaming } = useUserStreaming();
   const [selected, setSelected] = useState([]);
+  const [expenses, setExpenses] = useState(0);
   const navigate = useNavigate();
   console.log(streaming);
   console.log(selected);
+  console.log(expenses);
+  console.log({ expenses: expenses, userId: userData.user.id });
 
   async function sendSelectedStreamings() {
     try {
+      const userId = userData.user.id;
       await postUserStreaming(selected);
+      await updateExpenses(expenses, userId);
       navigate("/user");
     } catch (err) {
       toast("Não foi possível escolher os streamings");
@@ -85,6 +102,9 @@ export default function MainPage() {
                 streamingId={streaming.id}
                 logo={streaming.logo}
                 userData={userData}
+                price={streaming.price}
+                expenses={expenses}
+                setExpenses={setExpenses}
               />
             ))}
           </StreamingContainer>

@@ -9,13 +9,17 @@ export default function Footer() {
   return (
     <FooterStyle>
       <FooterButtons>
-        <TbHome2 />
+        <Link to="/user">
+          <TbHome2 />
+        </Link>
       </FooterButtons>
       <FooterButtons>
         <HiSearch />
       </FooterButtons>
       <FooterButtons>
-        <IoIosOptions />
+        <Link to="/main">
+          <IoIosOptions />
+        </Link>
       </FooterButtons>
     </FooterStyle>
   );
