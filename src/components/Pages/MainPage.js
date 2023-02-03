@@ -1,12 +1,13 @@
 import UserContext from "../../contexts/userContext";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import useStreaming from "../../hooks/useStreaming";
 import styled from "styled-components";
 import Footer from "../Footer";
 import { Link, useNavigate } from "react-router-dom";
 import useUserStreaming from "../../hooks/useUserStreaming";
 import { toast } from "react-toastify";
-import { updateExpenses } from "../../services/userApi";
+import { getExpenses, updateExpenses } from "../../services/userApi";
+import { getStreamingsByUser } from "../../services/streamingApi";
 
 function Streaming({
   streamingId,
@@ -17,15 +18,23 @@ function Streaming({
   price,
   expenses,
   setExpenses,
+  subscribed,
+  setSubscribed,
 }) {
   let bgColor = "#3D5A80";
-  if (isSelected(selected, streamingId)) {
+  if (
+    isSelected(selected, streamingId) ||
+    isSubscribed(subscribed, streamingId)
+  ) {
     bgColor = "#EE6C4D";
     return (
       <StreamingCard
         onClick={() => {
           setSelected(
             selected.filter((data) => data.streamingId !== streamingId)
+          );
+          setSubscribed(
+            subscribed.filter((data) => data.streamingId !== streamingId)
           );
           setExpenses(expenses - price);
         }}
@@ -45,6 +54,10 @@ function Streaming({
             { streamingId: streamingId, userId: userData.user.id },
           ]);
           setExpenses(expenses + price);
+          setSubscribed([
+            ...subscribed,
+            { streamingId: streamingId, userId: userData.user.id },
+          ]);
         }}
         background={bgColor}
       >
@@ -60,6 +73,14 @@ function isSelected(selected, streamingId) {
   if (selected.find((data) => data.streamingId === streamingId)) {
     return true;
   }
+  return false;
+}
+
+function isSubscribed(subscribed, streamingId) {
+  if (subscribed.find((data) => data.streamingId === streamingId)) {
+    return true;
+  }
+  return false;
 }
 
 export default function MainPage() {
@@ -67,19 +88,48 @@ export default function MainPage() {
   const { streaming, streamingLoading } = useStreaming();
   const { postUserStreaming } = useUserStreaming();
   const [selected, setSelected] = useState([]);
+  const [subscribed, setSubscribed] = useState([]);
   const [expenses, setExpenses] = useState(0);
   const navigate = useNavigate();
-  console.log(streaming);
-  console.log(selected);
+
+  useEffect(() => {
+    async function fetchUserStreamings() {
+      const result = await getStreamingsByUser({ userId: userData.user.id });
+      setSubscribed(
+        result.map((streaming) => {
+          return { streamingId: streaming.id, userId: userData.user.id };
+        })
+      );
+    }
+    fetchUserStreamings();
+  }, []);
+
+  useEffect(() => {
+    async function fetchUserExpenses() {
+      const result = await getExpenses(userData.user.id);
+      setExpenses(result.expenses);
+    }
+    fetchUserExpenses();
+  }, []);
+
   console.log(expenses);
-  console.log({ expenses: expenses, userId: userData.user.id });
+
+  console.log(subscribed);
+
+  console.log(selected);
 
   async function sendSelectedStreamings() {
     try {
       const userId = userData.user.id;
-      await postUserStreaming(selected);
-      await updateExpenses(expenses, userId);
-      navigate("/user");
+      if (subscribed.length != 0) {
+        await postUserStreaming(subscribed);
+        await updateExpenses(expenses, userId);
+        navigate("/user");
+      } else {
+        await postUserStreaming(selected);
+        await updateExpenses(expenses, userId);
+        navigate("/user");
+      }
     } catch (err) {
       toast("Não foi possível escolher os streamings");
     }
@@ -105,11 +155,13 @@ export default function MainPage() {
                 price={streaming.price}
                 expenses={expenses}
                 setExpenses={setExpenses}
+                subscribed={subscribed}
+                setSubscribed={setSubscribed}
               />
             ))}
           </StreamingContainer>
         )}
-        {selected.length !== 0 ? (
+        {selected.length !== 0 || subscribed.length !== 0 ? (
           <NextButton onClick={() => sendSelectedStreamings()}>
             Confirmar
           </NextButton>

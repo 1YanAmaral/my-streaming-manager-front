@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import UserContext from "../../contexts/userContext";
 import {
@@ -47,23 +48,38 @@ export default function UserPage() {
       <StreamingsDiv>
         {userStreamings.length != 0 ? (
           userStreamings.map((streaming) => (
-            <StreamingCard>
-              <img src={streaming.logo} alt="logo" />
-            </StreamingCard>
+            <img src={streaming.logo} alt="logo" />
           ))
         ) : (
-          <p>
+          <NoStreamings>
             Você ainda não escolheu nenhum serviço. Adicione os streamings que
             você assina!
-          </p>
+            <Link to="/main">
+              <AddButton> + </AddButton>
+            </Link>
+          </NoStreamings>
         )}
       </StreamingsDiv>
       <Title>Meus gastos</Title>
       <Spacer />
       <StreamingsDiv>
-        <StreamingSmall />
-        <StreamingSmall />
-        <StreamingSmall />
+        <ExpenseDetailsDiv>
+          {userStreamings.length != 0 ? (
+            userStreamings.map((streaming) => (
+              <ExpenseDetailsRow>
+                {streaming.name}R${(streaming.price / 10000).toFixed(2)}
+              </ExpenseDetailsRow>
+            ))
+          ) : (
+            <NoStreamings>
+              Você ainda não escolheu nenhum serviço. Adicione os streamings que
+              você assina!
+              <Link to="/main">
+                <AddButton> + </AddButton>
+              </Link>
+            </NoStreamings>
+          )}
+        </ExpenseDetailsDiv>
       </StreamingsDiv>
       <SumDiv>Total: R${(expenses / 10000).toFixed(2)}</SumDiv>
       <Title>Títulos populares</Title>
@@ -101,7 +117,9 @@ const StreamingsDiv = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  margin: 15px;
 `;
 
 const Title = styled.div`
@@ -137,18 +155,28 @@ const StreamingCard = styled.div`
   margin-bottom: 20px;
 `;
 
-const StreamingSmall = styled.div`
+const ExpenseDetailsDiv = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: flex-start;
-  padding: 8px 12px;
-  gap: 8px;
-  width: 120px;
-  height: 50px;
+  padding: 12px 12px;
+  width: 100rem;
+  height: 10rem;
   background: #98c1d9;
   border-radius: 14px;
   margin-right: 10px;
   margin-bottom: 10px;
+  overflow-y: scroll;
+`;
+
+const ExpenseDetailsRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px;
+  color: #293241;
+  font-weight: 500;
 `;
 
 const SumDiv = styled.div`
@@ -157,4 +185,25 @@ const SumDiv = styled.div`
   font-size: 20px;
   color: #ee6c4d;
   align-self: flex-end;
+`;
+
+const AddButton = styled.button`
+  width: 45px;
+  height: 45px;
+  background-color: #ee6c4d;
+  border-radius: 50px;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20.976px;
+  color: #e0fbfc;
+  border: none;
+  margin: 20px auto;
+`;
+const NoStreamings = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  color: #98c1d9;
 `;
