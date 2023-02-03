@@ -6,6 +6,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { UserProvider } from "./contexts/userContext";
 import UserPage from "./components/Pages/UserPage";
+import SearchPage from "./components/Pages/SearchPage";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/main" element={<MainPage />} />
             <Route path="/user" element={<UserPage />} />
+            <Route path="/search" element={<SearchPage />} />
           </Routes>
         </BrowserRouter>
       </UserProvider>

@@ -23,3 +23,9 @@ export async function getPopularTitles(streamingId) {
 
   return response.data;
 }
+
+export async function getSearchResults(search_value) {
+  const response = await api.get(`/streamings/titles/${search_value}`);
+
+  return response.data;
+}

@@ -14,7 +14,9 @@ export default function Footer() {
         </Link>
       </FooterButtons>
       <FooterButtons>
-        <HiSearch />
+        <Link to="/search">
+          <HiSearch />
+        </Link>
       </FooterButtons>
       <FooterButtons>
         <Link to="/main">

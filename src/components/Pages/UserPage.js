@@ -43,7 +43,12 @@ export default function UserPage() {
   console.log(expenses);
   return (
     <Container>
-      <Title>Meus streamings</Title>
+      <Title>
+        Meus streamings
+        <Link to="/main">
+          <SmallAddButton> + </SmallAddButton>
+        </Link>
+      </Title>
       <Spacer />
       <StreamingsDiv>
         {userStreamings.length != 0 ? (
@@ -123,11 +128,14 @@ const StreamingsDiv = styled.div`
 `;
 
 const Title = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-family: "Roboto", sans-serif;
   font-weight: 600;
   font-size: 20px;
   color: #ee6c4d;
-  width: 100vw;
+  width: 90vw;
 `;
 
 const Spacer = styled.div`
@@ -199,6 +207,19 @@ const AddButton = styled.button`
   color: #e0fbfc;
   border: none;
   margin: 20px auto;
+`;
+
+const SmallAddButton = styled.button`
+  width: 30px;
+  height: 30px;
+  background-color: #ee6c4d;
+  border-radius: 50px;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20.976px;
+  color: #293241;
+  border: none;
 `;
 const NoStreamings = styled.div`
   display: flex;
