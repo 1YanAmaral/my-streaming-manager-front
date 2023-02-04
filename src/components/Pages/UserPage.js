@@ -24,6 +24,7 @@ export default function UserPage() {
   }, []);
 
   console.log(userStreamings);
+  console.log(userData.user.id);
   /*  useEffect(() => {
     async function fetchPopularTitles() {
       const result = await getPopularTitles(203);

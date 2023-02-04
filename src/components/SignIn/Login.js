@@ -5,6 +5,7 @@ import {
   Bigbutton,
   Content,
   SpanLink,
+  Spacer,
 } from "../../assets/styles/sharedStyles";
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -29,7 +30,7 @@ export default function Login() {
       const userData = await signIn(email, password);
       setUserData(userData);
       toast("Login realizado com sucesso!");
-      navigate("/dashboard");
+      navigate("/user");
     } catch (err) {
       toast("Não foi possível fazer o login!");
     }
@@ -61,10 +62,8 @@ export default function Login() {
               <Bigbutton type="submit" disabled={loadingSignIn}>
                 Login
               </Bigbutton>
+              <Spacer />
               <GoogleSignIn />
-              <Bigbutton type="submit" disabled={loadingSignIn}>
-                Login com Facebook
-              </Bigbutton>
             </Wrapper>
           </form>
           <SpanLink>

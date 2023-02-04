@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { toast } from "react-toastify";
 import { postSignInWithGoogle } from "../../services/authGoogle";
+import { FcGoogle } from "react-icons/fc";
+import styled from "styled-components";
 
 export default function GoogleSignIn() {
   const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
@@ -40,8 +42,23 @@ export default function GoogleSignIn() {
       });
   }
   return (
-    <Bigbutton onClick={() => signInWithGoogle()} disabled={loading}>
+    <GoogleButton onClick={() => signInWithGoogle()} disabled={loading}>
+      <FcGoogle />
       Login com Google
-    </Bigbutton>
+    </GoogleButton>
   );
 }
+
+const GoogleButton = styled.button`
+  width: 303px;
+  height: 45px;
+  background-color: #e5e5e5;
+  border-radius: 4.63636px;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20.976px;
+  color: #ee6c4d;
+  border: none;
+  margin-top: 5px;
+`;

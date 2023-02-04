@@ -109,6 +109,13 @@ const PageTitle = styled.div`
   width: 90vw;
 `;
 
+const Spacer = styled.div`
+  width: 100vw;
+  height: 1px;
+  margin: 10px 0;
+  background-color: #ee6c4d;
+`;
+
 export {
   Content,
   Wrapper,
@@ -118,4 +125,5 @@ export {
   SpanLink,
   PageTitle,
   WrapperLine,
+  Spacer,
 };

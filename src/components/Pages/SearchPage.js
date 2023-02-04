@@ -2,6 +2,16 @@ import styled from "styled-components";
 import { HiSearch } from "react-icons/hi";
 import { useState, useEffect } from "react";
 import { getSearchResults } from "../../services/streamingApi";
+import Footer from "../Footer";
+
+function SearchedTitle({ id, image, name }) {
+  return (
+    <SearchResult>
+      <img src={image} alt="poster"></img>
+      <SearchTitle>{name}</SearchTitle>
+    </SearchResult>
+  );
+}
 
 export default function SearchPage() {
   const [searchResult, setSearchResult] = useState([]);
@@ -12,7 +22,6 @@ export default function SearchPage() {
     setSearchResult(result.results);
   }
 
-  console.log(searchValue);
   return (
     <Container>
       <Title>Busca de títulos</Title>
@@ -29,16 +38,24 @@ export default function SearchPage() {
         </SearchButton>
       </Title>
       {searchResult.length != 0 ? (
-        <ResultsDiv>
-          {searchResult.map((result) => (
-            <SearchResult>
-              <img src={result.image_url} alt="poster"></img>
-              <Title>{result.name}</Title>
-            </SearchResult>
-          ))}
-        </ResultsDiv>
+        <>
+          <Title>Resultados da pesquisa</Title>
+          <Spacer />
+          <ResultsDiv>
+            {searchResult.map((result) => (
+              <SearchedTitle
+                id={result.id}
+                name={result.name}
+                image={result.image_url}
+              />
+            ))}
+          </ResultsDiv>
+          <Footer />
+        </>
       ) : (
-        <></>
+        <>
+          <Footer />
+        </>
       )}
     </Container>
   );
@@ -132,4 +149,24 @@ const SearchResult = styled.div`
   font-size: 20px;
   color: #ee6c4d;
   width: 90vw;
+  margin-bottom: 25px;
+`;
+
+const SearchTitle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #ee6c4d;
+  width: 90vw;
+  margin-top: 10px;
+`;
+
+const Spacer = styled.div`
+  width: 100vw;
+  height: 1px;
+  margin: 10px 0;
+  background-color: #ee6c4d;
 `;

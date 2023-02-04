@@ -28,9 +28,9 @@ export default function Register() {
       toast("As senhas devem ser iguais!");
     } else {
       try {
-        await signUp(email, password);
+        await signUp(name, email, password);
         toast("Cadastro efetuado com sucesso! Por favor, faça login.");
-        navigate("/sign-in");
+        navigate("/");
       } catch (error) {
         toast("Não foi possível fazer o cadastro!");
       }
