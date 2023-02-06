@@ -13,7 +13,7 @@ export async function postUserStreamings(selected) {
 }
 
 export async function getStreamingsByUser(userId) {
-  const response = await api.get("/userstreamings/services", { userId });
+  const response = await api.get(`/userstreamings/services/${userId}`);
 
   return response.data;
 }

@@ -17,7 +17,7 @@ export default function UserPage() {
 
   useEffect(() => {
     async function fetchUserStreamings() {
-      const result = await getStreamingsByUser({ userId: userData.user.id });
+      const result = await getStreamingsByUser(userData.user.id);
       setUserStreamings(result);
     }
     fetchUserStreamings();
